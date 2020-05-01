@@ -1,5 +1,7 @@
 package ekg;
 
+import data.EKGDAO;
+import data.EKGDAOImpl;
 import dataCollector.DataSampleReader;
 import dataCollector.DataSampleReaderSimImpl;
 import gui.GUIController;
@@ -9,6 +11,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class EKGController extends Application implements EKGListener  {
@@ -16,6 +20,7 @@ public class EKGController extends Application implements EKGListener  {
     private GUIController guicontroller;
 
     public static EKGController instance;
+
 
     public static void main(String[] args) {
         EKGSimulator generator = new EKGSimulator();
@@ -28,16 +33,22 @@ public class EKGController extends Application implements EKGListener  {
     }
 
     @Override
-    public void notify(EKGData data){
+    public void notify(EKGData data) {
         DataSampleReader reader = new DataSampleReaderSimImpl();
         List<Double> doubles = reader.loadData();
         System.out.println(doubles);
-        System.out.println("Got Data " + data.getSample() );
-        if(GUIController.instance!=null){
-           GUIController.instance.notifyekg(data);
+        System.out.println("Got Data " + data.getSample());
+        if (GUIController.instance != null) {
+            GUIController.instance.notifyekg(data);
         }
-        //TODO Lav database
-    }
+
+        if (GUIController.record) {
+            EKGDAO ekgdao = new EKGDAOImpl();
+            ekgdao.save(data);
+        }
+
+            //TODO Lav database
+        }
 
 
     @Override
@@ -51,7 +62,10 @@ public class EKGController extends Application implements EKGListener  {
 
     }
 
+
     public void registerGUI(GUIController guiController) {
         this.guicontroller=guiController;
     }
+
+
 }

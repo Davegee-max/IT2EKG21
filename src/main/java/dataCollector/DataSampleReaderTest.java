@@ -12,4 +12,5 @@ public class DataSampleReaderTest {
         List<Double> doubles = reader.loadData();
         System.out.println(doubles);
     }
+
 }
